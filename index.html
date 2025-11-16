@@ -182,6 +182,121 @@
             accent-color: #555;
         }
 
+        .value-display {
+            display: inline-block;
+            color: #888;
+            font-size: 12px;
+            margin-left: 8px;
+            min-width: 50px;
+        }
+
+        .transform-controls {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .transform-controls.active {
+            display: block;
+        }
+
+        .floating-transform-controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 280px;
+            background: rgba(36, 36, 36, 0.95);
+            border: 1px solid #404040;
+            border-radius: 8px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            opacity: 0;
+            transform: translateX(20px);
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+        .floating-transform-controls.active {
+            opacity: 1;
+            transform: translateX(0);
+            pointer-events: all;
+        }
+
+        .floating-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            border-bottom: 1px solid #333;
+        }
+
+        .floating-header .section-title {
+            margin: 0;
+            font-size: 13px;
+        }
+
+        .close-btn {
+            background: transparent;
+            border: none;
+            color: #888;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .close-btn:hover {
+            background: #3a3a3a;
+            color: #ccc;
+        }
+
+        .floating-content {
+            padding: 16px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .floating-content .control-group {
+            margin-bottom: 16px;
+        }
+
+        .floating-content .control-group label {
+            display: block;
+            margin-bottom: 6px;
+            color: #ccc;
+            font-weight: 500;
+            font-size: 12px;
+        }
+
+        .slider-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .slider-group input[type="range"] {
+            flex: 1;
+        }
+
+        .slider-group .value-display {
+            min-width: 45px;
+            text-align: right;
+            font-size: 11px;
+            color: #888;
+        }
+
+        .control-divider {
+            height: 1px;
+            background: #333;
+            margin: 16px 0;
+        }
+
         .checkbox-label {
             display: flex;
             align-items: center;
@@ -289,6 +404,89 @@
             color: #ccc;
         }
 
+        .model-list {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .model-list.active {
+            display: block;
+        }
+
+        #modelItems {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .model-item {
+            background: #2a2a2a;
+            border: 1px solid #333;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .model-item:hover {
+            background: #2f2f2f;
+            border-color: #404040;
+        }
+
+        .model-item.selected {
+            background: #333;
+            border-color: #555;
+            box-shadow: 0 0 0 2px rgba(100, 100, 100, 0.3);
+        }
+
+        .model-item-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .model-item-name {
+            color: #ccc;
+            font-size: 13px;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .model-item-size {
+            color: #666;
+            font-size: 11px;
+            margin-top: 2px;
+        }
+
+        .model-item-controls {
+            display: flex;
+            gap: 4px;
+        }
+
+        .model-item-btn {
+            background: #333;
+            border: 1px solid #404040;
+            color: #aaa;
+            padding: 4px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 11px;
+            transition: all 0.2s;
+        }
+
+        .model-item-btn:hover {
+            background: #3a3a3a;
+            border-color: #4a4a4a;
+        }
+
+        .model-item-btn.hidden {
+            opacity: 0.5;
+        }
+
         .section-divider {
             height: 1px;
             background: #333;
@@ -324,7 +522,7 @@
 <body>
     <div class="header">
         <h1>3D 파일 뷰어</h1>
-        <p>3D 모델 파일을 업로드하고 실시간으로 확인하세요</p>
+        <p>3D 모델 파일을 업로드하고 실시간으로 확인하세요. 오류 문의· 김가현(ka2017t@sen.go.kr)</p>
         <div class="supported-formats">
             <span class="format-badge">OBJ</span>
             <span class="format-badge">FBX</span>
@@ -344,13 +542,12 @@
                 <p class="upload-text">클릭하거나 파일을 드래그하세요</p>
                 <p class="upload-hint">최대 50MB</p>
                 <input type="file" id="fileInput" class="file-input" 
-                       accept=".obj,.fbx,.usdz,.stl,.gltf,.glb,.ply,.3ds">
+                       accept=".obj,.fbx,.usdz,.stl,.gltf,.glb,.ply,.3ds" multiple>
             </div>
 
-            <div class="file-info" id="fileInfo">
-                <p><strong>파일명:</strong> <span id="fileName"></span></p>
-                <p><strong>크기:</strong> <span id="fileSize"></span></p>
-                <p><strong>형식:</strong> <span id="fileType"></span></p>
+            <div class="model-list" id="modelList">
+                <div class="section-title">로드된 모델</div>
+                <div id="modelItems"></div>
             </div>
 
             <div class="section-divider"></div>
@@ -404,6 +601,76 @@
                 <div class="spinner"></div>
                 <p>파일을 불러오는 중...</p>
             </div>
+            
+            <!-- 우측 플로팅 변형 컨트롤 -->
+            <div class="floating-transform-controls" id="transformControls">
+                <div class="floating-header">
+                    <div class="section-title">선택된 모델 변형</div>
+                    <button class="close-btn" id="deselectBtn">✕</button>
+                </div>
+                
+                <div class="floating-content">
+                    <div class="control-group">
+                        <label>위치 X</label>
+                        <div class="slider-group">
+                            <input type="range" id="posX" min="-10" max="10" step="0.1" value="0">
+                            <span id="posXValue" class="value-display">0</span>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>위치 Y</label>
+                        <div class="slider-group">
+                            <input type="range" id="posY" min="-10" max="10" step="0.1" value="0">
+                            <span id="posYValue" class="value-display">0</span>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>위치 Z</label>
+                        <div class="slider-group">
+                            <input type="range" id="posZ" min="-10" max="10" step="0.1" value="0">
+                            <span id="posZValue" class="value-display">0</span>
+                        </div>
+                    </div>
+
+                    <div class="control-divider"></div>
+                    
+                    <div class="control-group">
+                        <label>회전 X (도)</label>
+                        <div class="slider-group">
+                            <input type="range" id="rotX" min="0" max="360" step="1" value="0">
+                            <span id="rotXValue" class="value-display">0°</span>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>회전 Y (도)</label>
+                        <div class="slider-group">
+                            <input type="range" id="rotY" min="0" max="360" step="1" value="0">
+                            <span id="rotYValue" class="value-display">0°</span>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>회전 Z (도)</label>
+                        <div class="slider-group">
+                            <input type="range" id="rotZ" min="0" max="360" step="1" value="0">
+                            <span id="rotZValue" class="value-display">0°</span>
+                        </div>
+                    </div>
+
+                    <div class="control-divider"></div>
+                    
+                    <div class="control-group">
+                        <label>크기</label>
+                        <div class="slider-group">
+                            <input type="range" id="scale" min="0.1" max="3" step="0.1" value="1">
+                            <span id="scaleValue" class="value-display">1.0x</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -420,10 +687,15 @@
 
     <script>
         let scene, camera, renderer, controls;
-        let currentModel = null;
+        let models = []; // 배열로 변경
+        let selectedModel = null; // 선택된 모델
         let animationMixer = null;
         let lights = {};
         const clock = new THREE.Clock();
+        
+        // 모델 클릭 선택을 위한 변수
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
 
         function init() {
             const container = document.getElementById('canvas-container');
@@ -487,6 +759,51 @@
             // Handle window resize
             window.addEventListener('resize', onWindowResize);
 
+            // 3D 뷰에서 모델 클릭 선택
+            renderer.domElement.addEventListener('click', (event) => {
+                const container = document.getElementById('canvas-container');
+                const rect = container.getBoundingClientRect();
+                
+                // 마우스 좌표를 정규화 (-1 ~ 1)
+                mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+                mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+                
+                // Raycaster 업데이트
+                raycaster.setFromCamera(mouse, camera);
+                
+                // 모든 모델 객체 수집
+                const allObjects = [];
+                models.forEach(model => {
+                    if (model.visible) {
+                        model.object.traverse(child => {
+                            if (child instanceof THREE.Mesh) {
+                                allObjects.push({mesh: child, model: model});
+                            }
+                        });
+                    }
+                });
+                
+                // 교차 체크
+                const meshes = allObjects.map(obj => obj.mesh);
+                const intersects = raycaster.intersectObjects(meshes);
+                
+                if (intersects.length > 0) {
+                    // 클릭된 메쉬가 속한 모델 찾기
+                    const clickedMesh = intersects[0].object;
+                    const foundModel = allObjects.find(obj => obj.mesh === clickedMesh);
+                    
+                    if (foundModel) {
+                        const modelIndex = models.indexOf(foundModel.model);
+                        if (modelIndex !== -1) {
+                            selectModel(modelIndex);
+                        }
+                    }
+                } else {
+                    // 빈 공간 클릭 시 선택 해제
+                    deselectModel();
+                }
+            });
+
             // Animation loop
             animate();
         }
@@ -512,24 +829,11 @@
         }
 
         function loadModel(file) {
-            if (currentModel) {
-                scene.remove(currentModel);
-                currentModel = null;
-            }
-
-            if (animationMixer) {
-                animationMixer.stopAllAction();
-                animationMixer = null;
-            }
-
             document.getElementById('loading').classList.add('active');
-            document.getElementById('fileInfo').classList.add('active');
-            document.getElementById('fileName').textContent = file.name;
-            document.getElementById('fileSize').textContent = formatFileSize(file.size);
-            document.getElementById('fileType').textContent = file.name.split('.').pop().toUpperCase();
 
             const reader = new FileReader();
             const extension = file.name.split('.').pop().toLowerCase();
+            const modelId = Date.now() + Math.random();
 
             reader.onload = function(e) {
                 const contents = e.target.result;
@@ -537,26 +841,26 @@
                 try {
                     switch(extension) {
                         case 'obj':
-                            loadOBJ(contents);
+                            loadOBJ(contents, file, modelId);
                             break;
                         case 'fbx':
-                            loadFBX(contents);
+                            loadFBX(contents, file, modelId);
                             break;
                         case 'stl':
-                            loadSTL(contents);
+                            loadSTL(contents, file, modelId);
                             break;
                         case 'gltf':
                         case 'glb':
-                            loadGLTF(contents, file);
+                            loadGLTF(contents, file, modelId);
                             break;
                         case 'usdz':
-                            loadUSDZ(contents);
+                            loadUSDZ(contents, file, modelId);
                             break;
                         case 'ply':
-                            loadPLY(contents);
+                            loadPLY(contents, file, modelId);
                             break;
                         case '3ds':
-                            load3DS(contents);
+                            load3DS(contents, file, modelId);
                             break;
                         default:
                             alert('지원하지 않는 파일 형식입니다.');
@@ -577,7 +881,7 @@
             }
         }
 
-        function loadOBJ(contents) {
+        function loadOBJ(contents, file, modelId) {
             const loader = new THREE.OBJLoader();
             const object = loader.parse(contents);
             
@@ -592,10 +896,10 @@
                 }
             });
             
-            addModelToScene(object);
+            addModelToScene(object, file, modelId);
         }
 
-        function loadFBX(contents) {
+        function loadFBX(contents, file, modelId) {
             const originalWarn = console.warn;
             console.warn = () => {};
             
@@ -623,13 +927,13 @@
                     document.getElementById('animationControls').style.display = 'none';
                 }
                 
-                addModelToScene(object);
+                addModelToScene(object, file, modelId);
             } finally {
                 console.warn = originalWarn;
             }
         }
 
-        function loadSTL(contents) {
+        function loadSTL(contents, file, modelId) {
             const loader = new THREE.STLLoader();
             const geometry = loader.parse(contents);
             
@@ -648,10 +952,10 @@
                 side: THREE.DoubleSide
             });
             const mesh = new THREE.Mesh(geometry, material);
-            addModelToScene(mesh);
+            addModelToScene(mesh, file, modelId);
         }
 
-        function loadGLTF(contents, file) {
+        function loadGLTF(contents, file, modelId) {
             const loader = new THREE.GLTFLoader();
             const isGLB = file.name.toLowerCase().endsWith('.glb');
             
@@ -676,7 +980,7 @@
                     document.getElementById('animationControls').style.display = 'none';
                 }
                 
-                addModelToScene(gltf.scene);
+                addModelToScene(gltf.scene, file, modelId);
             }, (error) => {
                 console.error('GLTF 로딩 오류:', error);
                 alert('GLTF/GLB 파일을 불러오는 중 오류가 발생했습니다.');
@@ -684,7 +988,7 @@
             });
         }
 
-        function loadUSDZ(contents) {
+        function loadUSDZ(contents, file, modelId) {
             const loader = new THREE.USDZLoader();
             const group = loader.parse(contents);
             
@@ -694,10 +998,10 @@
                 }
             });
             
-            addModelToScene(group);
+            addModelToScene(group, file, modelId);
         }
 
-        function loadPLY(contents) {
+        function loadPLY(contents, file, modelId) {
             const loader = new THREE.PLYLoader();
             const geometry = loader.parse(contents);
             
@@ -717,10 +1021,10 @@
                 vertexColors: geometry.attributes.color ? true : false
             });
             const mesh = new THREE.Mesh(geometry, material);
-            addModelToScene(mesh);
+            addModelToScene(mesh, file, modelId);
         }
 
-        function load3DS(contents) {
+        function load3DS(contents, file, modelId) {
             const loader = new THREE.TDSLoader();
             const object = loader.parse(contents);
             
@@ -730,11 +1034,10 @@
                 }
             });
             
-            addModelToScene(object);
+            addModelToScene(object, file, modelId);
         }
 
-        function addModelToScene(object) {
-            currentModel = object;
+        function addModelToScene(object, file, modelId) {
             scene.add(object);
 
             const box = new THREE.Box3().setFromObject(object);
@@ -749,27 +1052,159 @@
             box.setFromObject(object);
             const scaledCenter = box.getCenter(new THREE.Vector3());
             
-            object.position.x -= scaledCenter.x;
+            // 모델들을 약간씩 오프셋
+            const offset = models.length * 2;
+            object.position.x = offset - scaledCenter.x;
             object.position.y -= scaledCenter.y;
             object.position.z -= scaledCenter.z;
 
-            const scaledSize = box.getSize(new THREE.Vector3());
-            const maxScaledDim = Math.max(scaledSize.x, scaledSize.y, scaledSize.z);
-            const fov = camera.fov * (Math.PI / 180);
-            const cameraDistance = Math.abs(maxScaledDim / Math.sin(fov / 2)) * 1.5;
+            // 모델 정보 저장
+            models.push({
+                id: modelId,
+                object: object,
+                name: file.name,
+                size: file.size,
+                visible: true,
+                initialPosition: {x: object.position.x, y: object.position.y, z: object.position.z},
+                initialRotation: {x: 0, y: 0, z: 0},
+                initialScale: object.scale.x
+            });
 
-            camera.position.set(
-                cameraDistance * 0.7,
-                cameraDistance * 0.5,
-                cameraDistance * 0.7
-            );
+            // UI 업데이트
+            updateModelList();
             
-            controls.target.set(0, 0, 0);
-            controls.update();
+            // 첫 번째 모델이면 카메라 위치 조정
+            if (models.length === 1) {
+                const scaledSize = box.getSize(new THREE.Vector3());
+                const maxScaledDim = Math.max(scaledSize.x, scaledSize.y, scaledSize.z);
+                const fov = camera.fov * (Math.PI / 180);
+                const cameraDistance = Math.abs(maxScaledDim / Math.sin(fov / 2)) * 1.5;
+
+                camera.position.set(
+                    cameraDistance * 0.7,
+                    cameraDistance * 0.5,
+                    cameraDistance * 0.7
+                );
+                
+                controls.target.set(0, 0, 0);
+                controls.update();
+            }
 
             document.getElementById('loading').classList.remove('active');
             document.getElementById('resetBtn').disabled = false;
             document.getElementById('downloadBtn').disabled = false;
+        }
+
+        function updateModelList() {
+            const modelItems = document.getElementById('modelItems');
+            const modelList = document.getElementById('modelList');
+            
+            if (models.length === 0) {
+                modelList.classList.remove('active');
+                return;
+            }
+            
+            modelList.classList.add('active');
+            modelItems.innerHTML = '';
+            
+            models.forEach((model, index) => {
+                const item = document.createElement('div');
+                item.className = 'model-item' + (selectedModel === model ? ' selected' : '');
+                item.innerHTML = `
+                    <div class="model-item-info">
+                        <div class="model-item-name" title="${model.name}">${model.name}</div>
+                        <div class="model-item-size">${formatFileSize(model.size)}</div>
+                    </div>
+                    <div class="model-item-controls">
+                        <button class="model-item-btn ${model.visible ? '' : 'hidden'}" onclick="event.stopPropagation(); toggleModel(${index})">
+                            ${model.visible ? '👁️' : '🚫'}
+                        </button>
+                        <button class="model-item-btn" onclick="event.stopPropagation(); removeModel(${index})">🗑️</button>
+                    </div>
+                `;
+                // 클릭 이벤트 리스너 추가
+                item.addEventListener('click', () => {
+                    console.log('모델 아이템 클릭됨, index:', index);
+                    selectModel(index);
+                });
+                modelItems.appendChild(item);
+            });
+        }
+
+        function selectModel(index) {
+            console.log('selectModel 호출됨, index:', index, 'models:', models);
+            if (models[index]) {
+                selectedModel = models[index];
+                console.log('모델 선택됨:', selectedModel);
+                updateModelList();
+                updateTransformControls();
+                const transformEl = document.getElementById('transformControls');
+                console.log('transformControls 엘리먼트:', transformEl);
+                transformEl.classList.add('active');
+                console.log('active 클래스 추가 완료');
+            }
+        }
+
+        function deselectModel() {
+            selectedModel = null;
+            updateModelList();
+            document.getElementById('transformControls').classList.remove('active');
+        }
+
+        function updateTransformControls() {
+            if (!selectedModel) return;
+
+            const obj = selectedModel.object;
+            
+            // 위치
+            document.getElementById('posX').value = obj.position.x.toFixed(1);
+            document.getElementById('posY').value = obj.position.y.toFixed(1);
+            document.getElementById('posZ').value = obj.position.z.toFixed(1);
+            document.getElementById('posXValue').textContent = obj.position.x.toFixed(1);
+            document.getElementById('posYValue').textContent = obj.position.y.toFixed(1);
+            document.getElementById('posZValue').textContent = obj.position.z.toFixed(1);
+            
+            // 회전 (라디안 -> 도)
+            const rotX = (obj.rotation.x * 180 / Math.PI) % 360;
+            const rotY = (obj.rotation.y * 180 / Math.PI) % 360;
+            const rotZ = (obj.rotation.z * 180 / Math.PI) % 360;
+            
+            document.getElementById('rotX').value = rotX.toFixed(0);
+            document.getElementById('rotY').value = rotY.toFixed(0);
+            document.getElementById('rotZ').value = rotZ.toFixed(0);
+            document.getElementById('rotXValue').textContent = rotX.toFixed(0) + '°';
+            document.getElementById('rotYValue').textContent = rotY.toFixed(0) + '°';
+            document.getElementById('rotZValue').textContent = rotZ.toFixed(0) + '°';
+            
+            // 크기
+            const avgScale = (obj.scale.x + obj.scale.y + obj.scale.z) / 3;
+            const relativeScale = avgScale / selectedModel.initialScale;
+            document.getElementById('scale').value = relativeScale.toFixed(1);
+            document.getElementById('scaleValue').textContent = relativeScale.toFixed(1) + 'x';
+        }
+
+        function toggleModel(index) {
+            if (models[index]) {
+                models[index].visible = !models[index].visible;
+                models[index].object.visible = models[index].visible;
+                updateModelList();
+            }
+        }
+
+        function removeModel(index) {
+            if (models[index]) {
+                if (selectedModel === models[index]) {
+                    deselectModel();
+                }
+                scene.remove(models[index].object);
+                models.splice(index, 1);
+                updateModelList();
+                
+                if (models.length === 0) {
+                    document.getElementById('resetBtn').disabled = true;
+                    document.getElementById('downloadBtn').disabled = true;
+                }
+            }
         }
 
         function updateAnimationInfo(animations) {
@@ -804,13 +1239,17 @@
         uploadArea.addEventListener('drop', (e) => {
             e.preventDefault();
             uploadArea.classList.remove('drag-over');
-            const file = e.dataTransfer.files[0];
-            if (file) loadModel(file);
+            const files = e.dataTransfer.files;
+            for (let i = 0; i < files.length; i++) {
+                loadModel(files[i]);
+            }
         });
 
         fileInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) loadModel(file);
+            const files = e.target.files;
+            for (let i = 0; i < files.length; i++) {
+                loadModel(files[i]);
+            }
         });
 
         document.getElementById('bgColor').addEventListener('input', (e) => {
@@ -818,13 +1257,13 @@
         });
 
         document.getElementById('wireframe').addEventListener('change', (e) => {
-            if (currentModel) {
-                currentModel.traverse(child => {
+            models.forEach(model => {
+                model.object.traverse(child => {
                     if (child instanceof THREE.Mesh) {
                         child.material.wireframe = e.target.checked;
                     }
                 });
-            }
+            });
         });
 
         document.getElementById('autoRotate').addEventListener('change', (e) => {
@@ -852,9 +1291,68 @@
             }
         });
 
+        // 변형 컨트롤 이벤트 리스너
+        document.getElementById('posX').addEventListener('input', (e) => {
+            if (selectedModel) {
+                selectedModel.object.position.x = parseFloat(e.target.value);
+                document.getElementById('posXValue').textContent = e.target.value;
+            }
+        });
+
+        document.getElementById('posY').addEventListener('input', (e) => {
+            if (selectedModel) {
+                selectedModel.object.position.y = parseFloat(e.target.value);
+                document.getElementById('posYValue').textContent = e.target.value;
+            }
+        });
+
+        document.getElementById('posZ').addEventListener('input', (e) => {
+            if (selectedModel) {
+                selectedModel.object.position.z = parseFloat(e.target.value);
+                document.getElementById('posZValue').textContent = e.target.value;
+            }
+        });
+
+        document.getElementById('rotX').addEventListener('input', (e) => {
+            if (selectedModel) {
+                selectedModel.object.rotation.x = parseFloat(e.target.value) * Math.PI / 180;
+                document.getElementById('rotXValue').textContent = e.target.value + '°';
+            }
+        });
+
+        document.getElementById('rotY').addEventListener('input', (e) => {
+            if (selectedModel) {
+                selectedModel.object.rotation.y = parseFloat(e.target.value) * Math.PI / 180;
+                document.getElementById('rotYValue').textContent = e.target.value + '°';
+            }
+        });
+
+        document.getElementById('rotZ').addEventListener('input', (e) => {
+            if (selectedModel) {
+                selectedModel.object.rotation.z = parseFloat(e.target.value) * Math.PI / 180;
+                document.getElementById('rotZValue').textContent = e.target.value + '°';
+            }
+        });
+
+        document.getElementById('scale').addEventListener('input', (e) => {
+            if (selectedModel) {
+                const newScale = parseFloat(e.target.value) * selectedModel.initialScale;
+                selectedModel.object.scale.set(newScale, newScale, newScale);
+                document.getElementById('scaleValue').textContent = e.target.value + 'x';
+            }
+        });
+
+        document.getElementById('deselectBtn').addEventListener('click', deselectModel);
+
         document.getElementById('resetBtn').addEventListener('click', () => {
-            if (currentModel) {
-                const box = new THREE.Box3().setFromObject(currentModel);
+            if (models.length > 0) {
+                // 모든 모델의 바운딩 박스 계산
+                const box = new THREE.Box3();
+                models.forEach(model => {
+                    const modelBox = new THREE.Box3().setFromObject(model.object);
+                    box.union(modelBox);
+                });
+                
                 const size = box.getSize(new THREE.Vector3());
                 const maxDim = Math.max(size.x, size.y, size.z);
                 const fov = camera.fov * (Math.PI / 180);
